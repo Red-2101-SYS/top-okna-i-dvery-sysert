@@ -3,6 +3,19 @@ import fs from "fs/promises";
 import { NextResponse } from "next/server";
 import { prisma } from "@/lib/prisma";
 
+function slugify(input: string) {
+  return input
+    .toLowerCase()
+    .trim()
+    .replace(/[^a-zа-яё0-9\s-]/gi, "")
+    .replace(/\s+/g, "-")
+    .replace(/-+/g, "-");
+}
+
+function randomSuffix(length = 6) {
+  return Math.random().toString(36).slice(2, 2 + length);
+}
+
 export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }) {
   const { id } = await ctx.params;
   const service = await prisma.service.findUnique({ 
@@ -13,7 +26,7 @@ export async function GET(req: Request, ctx: { params: Promise<{ id: string }> }
 }
 
 export async function PUT(req: Request, ctx: { params: Promise<{ id: string }> }) {
-  const { id } = await ctx.params;   // ✅ вот этого у тебя сейчас нет
+  const { id } = await ctx.params;
 
   const body = await req.json().catch(() => null);
 
