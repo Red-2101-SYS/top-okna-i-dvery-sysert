@@ -45,7 +45,6 @@ export async function POST(req: Request) {
       slug: finalSlug,
       description,
       priceFrom: typeof priceFrom === "number" ? priceFrom : null,
-      categoryId,
       isActive: body?.isActive ?? true,
 	  imageUrls,
 	  categoryId: body?.categoryId || null,
