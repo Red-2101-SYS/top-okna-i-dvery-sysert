@@ -44,7 +44,6 @@ export async function PUT(req: Request, ctx: { params: Promise<{ id: string }> }
       slug: finalSlug,
       description: body?.description?.trim() || null,
       priceFrom: typeof body?.priceFrom === "number" ? body.priceFrom : null,
-      categoryId: body?.categoryId || null,
       isActive: body?.isActive ?? current.isActive,
 	  imageUrls: body.imageUrls,
 	  categoryId: body?.categoryId || null,
