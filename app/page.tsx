@@ -376,7 +376,7 @@ function CallbackLeadForm() {
       {error && <div style={err}>{error}</div>}
       {ok && <div style={okBox}>Заявка отправлена! Мы скоро свяжемся.</div>}
 
-      <button disabled={loading} type="submit" style={btnPrimary}>
+      <button disabled={loading} type="submit" style={ui.btnPrimary}>
         {loading ? "Отправляем..." : "Заказать звонок"}
       </button>
     </form>
