@@ -1,0 +1,146 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum ProductType {
+  DOOR
+  WINDOW
+}
+
+enum LeadType {
+  CALC_DOOR
+  CALC_WINDOW
+  MEASURE
+  CALLBACK
+  QUESTION
+}
+
+enum LeadStatus {
+  NEW
+  IN_PROGRESS
+  DONE
+  SPAM
+}
+
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  password  String
+  name      String?
+  role      String   @default("admin")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Category {
+  id        String   @id @default(cuid())
+  name      String
+  slug      String   @unique
+  type      ProductType
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  products  Product[]
+}
+
+model Product {
+  id          String      @id @default(cuid())
+  type        ProductType
+  title       String
+  slug        String      @unique
+  description String?
+  priceFrom   Int?
+  imageUrls String[] @default([])
+  isActive    Boolean     @default(true)
+
+  categoryId  String?
+  category    Category?   @relation(fields: [categoryId], references: [id])
+
+  images      ProductImage[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+model ProductImage {
+  id        String   @id @default(cuid())
+  url       String
+  alt       String?
+  sortOrder Int      @default(0)
+
+  productId String
+  product   Product  @relation(fields: [productId], references: [id], onDelete: Cascade)
+
+  createdAt DateTime @default(now())
+}
+
+model Service {
+  id          String   @id @default(cuid())
+  title       String
+  slug        String   @unique
+  description String?
+  priceFrom   Int?
+  imageUrls   String[] @default([])
+
+  badge       String?
+  isActive    Boolean  @default(true)
+  sort        Int      @default(100)
+  
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+
+model Lead {
+  id          String     @id @default(cuid())
+  type        LeadType
+  status      LeadStatus @default(NEW)
+
+  name        String?
+  phone       String
+  email       String?
+  comment     String?
+
+  payload     Json?
+
+  pageUrl     String?
+  referrer    String?
+
+  utmSource   String?
+  utmMedium   String?
+  utmCampaign String?
+  utmTerm     String?
+  utmContent  String?
+
+  managerNote String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Setting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @updatedAt
+}
+
+model PricingRule {
+  id            String      @id @default(cuid())
+  productType   ProductType
+  ruleGroup     String      // BASE / OPTION / SERVICE / COEF
+  code          String      @unique
+  label         String
+  conditionJson Json?
+  valueType     String      // ADD / MULTIPLY
+  value         Float
+  priority      Int         @default(0)
+  isActive      Boolean     @default(true)
+
+  createdAt     DateTime    @default(now())
+  updatedAt     DateTime    @updatedAt
+}

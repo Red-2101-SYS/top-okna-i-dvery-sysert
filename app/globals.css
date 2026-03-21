@@ -1,0 +1,163 @@
+@import "tailwindcss";
+
+:root {
+  --background: #ffffff;
+  --foreground: #171717;
+}
+
+@theme inline {
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --font-sans: var(--font-geist-sans);
+  --font-mono: var(--font-geist-mono);
+}
+
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background: #0a0a0a;
+    --foreground: #ededed;
+  }
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+/* =Чиним курсор при наведении на кнопку= */
+
+a.btn, button.btn {
+  cursor: pointer;
+}
+
+button.btn:disabled,
+a.btn-disabled {
+  cursor: not-allowed;
+}
+
+
+
+/* ===== Buttons (global) ===== */
+
+/* base */
+a.btn, button.btn {
+  transition: transform 150ms ease, box-shadow 150ms ease, filter 150ms ease,
+    background 150ms ease, border-color 150ms ease, color 150ms ease;
+  user-select: none;
+}
+
+/* press */
+a.btn:active, button.btn:active {
+  transform: translateY(0px) scale(0.99);
+}
+
+/* primary hover */
+a.btn.btn-primary:hover,
+button.btn.btn-primary:hover {
+  background: #ef4444 !important;      /* красный */
+  border-color: #ef4444 !important;
+  color: #ffffff !important;           /* белый текст */
+  filter: none;
+  box-shadow: 0 14px 28px rgba(239,68,68,0.22)t;
+  transform: translateY(-1px);
+}
+
+/* если внутри кнопки есть <span> или иконка — чтобы тоже стала белой */
+a.btn.btn-primary:hover * ,
+button.btn.btn-primary:hover * {
+  color: #ffffff;
+}
+
+/* ghost hover */
+a.btn.btn-ghost:hover, button.btn.btn-ghost:hover {
+  border-color: #ef4444 !important;
+  color: #b91c1c !important;
+  background: #fff5f5 !important;
+}
+
+/* disabled */
+a.btn-disabled, a.btn:disabled, button.btn:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  pointer-events: none;
+  box-shadow: none;
+  transform: none;
+}
+
+/* Danger (если нужно) */
+a.btn-danger:hover, button.btn-danger:hover {
+  filter: brightness(0.9);
+}
+
+/* ===== Поле выбрать файл в админке ===== */
+.uploadBox{
+  cursor: pointer;
+  transition: transform .12s ease, border-color .12s ease, background .12s ease, box-shadow .12s ease;
+}
+
+.uploadBox:hover{
+  transform: translateY(-1px);
+  border-color:#111827 !important;
+  box-shadow: 0 10px 26px rgba(17,24,39,.10);
+  background: #fafafa;
+}
+
+.uploadBox:active{
+  transform: translateY(0px);
+  box-shadow: 0 6px 16px rgba(17,24,39,.08);
+}
+
+/* --- Card media hover overlay (doors/windows/services cards) --- */
+/* базовое состояние */
+.hoverCard .mediaOverlay { opacity: 0; }
+.hoverCard .mediaOverlayText { transform: translateY(6px); }
+
+/* hover эффект */
+.hoverCard:hover .mediaOverlay { opacity: 1; }
+.hoverCard:hover .mediaImg { filter: brightness(0.65); }
+.hoverCard:hover .mediaOverlayText { transform: translateY(0); }
+
+/* краснеет заголовок */
+.hoverCard:hover .cardTitle { color: #b91c1c; }
+
+
+
+/* калькулятор: затемнение всей области превью */
+.hoverCard .mediaWrap::after{
+  content:"";
+  position:absolute;
+  inset:0;
+  background: rgba(17,24,39,0.35);
+  opacity:0;
+  transition: opacity 180ms ease;
+  pointer-events:none;
+  border-radius: 14px;
+}
+
+.hoverCard:hover .mediaWrap::after{
+  opacity:1;
+}
+
+/* если хочешь чуть приглушать и саму картинку — оставь */
+.hoverCard:hover .mediaImg{
+  filter: brightness(0.85);
+}
+
+/* красный заголовок */
+.hoverCard:hover .cardTitle{ color:#b91c1c; }
+
+
+/* ---- calculator services hover ---- */
+.calcServiceRow{
+  transition: background 180ms ease, border-color 180ms ease;
+}
+
+.calcServiceRow:hover{
+  background: rgba(17,24,39,0.04)!important; /* Цвет наведения на услугу, старница услуг в калькуляторе */
+  border-color: #f46060 !important; /* Цвет наведения на услугу, старница услуг в калькуляторе */
+}
+
+.calcServiceRow:hover .calcServiceTitle{
+  color:#b91c1c;
+}
