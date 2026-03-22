@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { Suspense, useEffect, useMemo, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { ui } from "@/app/styles/ui";
 
@@ -28,6 +28,33 @@ type Service = {
 };
 
 export default function CalculatorPage() {
+  return (
+    <Suspense fallback={<CalculatorPageFallback />}>
+      <CalculatorPageContent />
+    </Suspense>
+  );
+}
+
+function CalculatorPageFallback() {
+  return (
+    <main style={{ padding: "24px 0" }}>
+      <div style={ui.container}>
+        <h1 style={{ fontSize: 28, fontWeight: 900, margin: 0 }}>Калькулятор</h1>
+        <p style={{ color: "#6b7280", marginTop: 8 }}>
+          Ориентировочный расчёт. Для точной цены — замер и подбор комплектации.
+        </p>
+
+        <div style={{ marginTop: 16 }}>
+          <section style={card}>
+            <p style={{ marginTop: 0 }}>Загрузка...</p>
+          </section>
+        </div>
+      </div>
+    </main>
+  );
+}
+
+function CalculatorPageContent() {
   const searchParams = useSearchParams();
   const tabParam = searchParams.get("tab"); // "doors" | "windows" | "services"
   const productParam = searchParams.get("product"); // slug
@@ -42,7 +69,6 @@ export default function CalculatorPage() {
     if (tabParam === "doors") setTab("DOORS");
     if (tabParam === "windows") setTab("WINDOWS");
     if (tabParam === "services") setTab("SERVICES");
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tabParam]);
 
   const productSlugFromCatalog = productParam || null;
