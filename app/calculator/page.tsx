@@ -15,7 +15,6 @@ type Product = {
   imageUrls: string[];
   isActive: boolean;
 
-  // ✅ добавили категорию (для фильтра дверей)
   category?: { slug: string; name: string } | null;
 };
 
@@ -26,33 +25,6 @@ type Service = {
   priceFrom: number | null;
   isActive: boolean;
 };
-
-export default function CalculatorPage() {
-  return (
-    <Suspense fallback={<CalculatorPageFallback />}>
-      <CalculatorPageContent />
-    </Suspense>
-  );
-}
-
-function CalculatorPageFallback() {
-  return (
-    <main style={{ padding: "24px 0" }}>
-      <div style={ui.container}>
-        <h1 style={{ fontSize: 28, fontWeight: 900, margin: 0 }}>Калькулятор</h1>
-        <p style={{ color: "#6b7280", marginTop: 8 }}>
-          Ориентировочный расчёт. Для точной цены — замер и подбор комплектации.
-        </p>
-
-        <div style={{ marginTop: 16 }}>
-          <section style={card}>
-            <p style={{ marginTop: 0 }}>Загрузка...</p>
-          </section>
-        </div>
-      </div>
-    </main>
-  );
-}
 
 function CalculatorPageContent() {
   const searchParams = useSearchParams();
@@ -67,8 +39,8 @@ function CalculatorPageContent() {
 
   useEffect(() => {
     if (tabParam === "doors") setTab("DOORS");
-    if (tabParam === "windows") setTab("WINDOWS");
-    if (tabParam === "services") setTab("SERVICES");
+    else if (tabParam === "windows") setTab("WINDOWS");
+    else if (tabParam === "services") setTab("SERVICES");
   }, [tabParam]);
 
   const productSlugFromCatalog = productParam || null;
@@ -82,13 +54,28 @@ function CalculatorPageContent() {
         </p>
 
         <div style={{ marginTop: 14, display: "flex", gap: 10, flexWrap: "wrap" }}>
-          <button onClick={() => setTab("WINDOWS")} className="btn btn-primary" style={tab === "WINDOWS" ? tabActive : tabBtn} type="button">
+          <button
+            onClick={() => setTab("WINDOWS")}
+            className="btn btn-primary"
+            style={tab === "WINDOWS" ? tabActive : tabBtn}
+            type="button"
+          >
             Окна
           </button>
-          <button onClick={() => setTab("DOORS")} className="btn btn-primary" style={tab === "DOORS" ? tabActive : tabBtn} type="button">
+          <button
+            onClick={() => setTab("DOORS")}
+            className="btn btn-primary"
+            style={tab === "DOORS" ? tabActive : tabBtn}
+            type="button"
+          >
             Двери
           </button>
-          <button onClick={() => setTab("SERVICES")} className="btn btn-primary" style={tab === "SERVICES" ? tabActive : tabBtn} type="button">
+          <button
+            onClick={() => setTab("SERVICES")}
+            className="btn btn-primary"
+            style={tab === "SERVICES" ? tabActive : tabBtn}
+            type="button"
+          >
             Услуги
           </button>
         </div>
@@ -103,6 +90,23 @@ function CalculatorPageContent() {
   );
 }
 
+function CalculatorPageFallback() {
+  return (
+    <main style={{ padding: "24px 0" }}>
+      <div style={ui.container}>Загрузка калькулятора...</div>
+    </main>
+  );
+}
+
+export default function CalculatorPage() {
+  return (
+    <Suspense fallback={<CalculatorPageFallback />}>
+      <CalculatorPageContent />
+    </Suspense>
+  );
+}
+
+/* ----------------------------- helpers ----------------------------- */
 /* ----------------------------- helpers ----------------------------- */
 
 function normalizeList<T>(arr: any, mapFn: (x: any) => T): T[] {
