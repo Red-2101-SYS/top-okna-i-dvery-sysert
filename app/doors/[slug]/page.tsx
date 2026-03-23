@@ -21,9 +21,6 @@ async function getProduct(slug: string): Promise<Product | null> {
 	if (!res.ok) {
 		throw new Error(`Failed to load product: ${res.status}`);
 	}
-
-const product = await res.json();
-	
   if (!res.ok) return null;
   const data = await res.json();
   return data.product ?? null;
