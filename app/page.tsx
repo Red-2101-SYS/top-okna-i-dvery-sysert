@@ -154,7 +154,7 @@ function ServicesBlock() {
         ))}
       </div>
       <div style={{ marginTop: 12 }}>
-        <Link href="/services" style={btnGhost}>Все услуги</Link>
+        <Link href="/services" style={ui.btnGhost}>Все услуги</Link>
       </div>
     </section>
   );
