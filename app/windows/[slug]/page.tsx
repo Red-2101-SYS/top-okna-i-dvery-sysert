@@ -15,7 +15,14 @@ type Product = {
 };
 
 async function getProduct(slug: string): Promise<Product | null> {
-  const res = await fetch(`http://localhost:3000/api/products/${slug}`, { cache: "no-store" });
+	const res = await fetch(`${process.env.APP_URL}/api/products/${slug}`, {
+	  cache: "no-store",
+  });
+	if (!res.ok) {
+		throw new Error(`Failed to load product: ${res.status}`);
+	}
+
+	
   if (!res.ok) return null;
   const data = await res.json();
   return data.product ?? null;
