@@ -1,11 +1,33 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 import { ui } from "@/app/styles/ui";
 
 export default function AdminHome() {
+  const [loggingOut, setLoggingOut] = useState(false);
+
+  async function handleLogout() {
+    try {
+      setLoggingOut(true);
+      await fetch("/api/admin/logout", { method: "POST" });
+      window.location.href = "/admin/login";
+    } catch {
+      alert("Не удалось выйти из аккаунта");
+      setLoggingOut(false);
+    }
+  }
+
   return (
     <main style={{ padding: 24 }}>
 		<div style={ ui.containerDA900 }>
-			<h1 style={{ fontSize: 24, fontWeight: 700 }}>Панель Администратора</h1>
+			<div style={{ display: "flex", gap: 12, alignItems: "center", marginTop: 12 }}>
+			<h1 style={{ fontSize: 24, fontWeight: 700 }}>Панель Администратора</h1>	
+				<button onClick={handleLogout} className="btn btn-ghost" disabled={loggingOut} style={ui.btnGhost}>
+				{loggingOut ? "Выходим..." : "Выйти"}
+				</button>
+			</div>
+					
 			<p style={heroText}>
 				Добро пожаловать в панель админстратора! Здесь вы можете управлять товарами на сайте и работать с заявками от клиентов.
 			</p>
