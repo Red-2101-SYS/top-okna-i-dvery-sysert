@@ -59,11 +59,24 @@ export async function PUT(req: Request, ctx: { params: Promise<{ id: string }> }
   return NextResponse.json({ ok: true, service });
 }
 
-export function toPublicPath(url: string) {
-  const publicDir = path.join(process.cwd(), "public");
+function getUploadsRoot() {
+  const dir = process.env.UPLOADS_DIR;
+  if (!dir) {
+    throw new Error("UPLOADS_DIR is not set");
+  }
+
+  return path.isAbsolute(dir) ? dir : path.resolve(process.cwd(), dir);
+}
+
+function toUploadPath(url: string) {
+  const uploadsRoot = getUploadsRoot();
   const rel = url.replace(/^\/+/, "");
-  const filePath = path.join(publicDir, rel);
-  if (!filePath.startsWith(publicDir)) return null;
+  const filePath = path.resolve(uploadsRoot, rel);
+
+  if (filePath !== uploadsRoot && !filePath.startsWith(uploadsRoot + path.sep)) {
+    return null;
+  }
+
   return filePath;
 }
 
@@ -85,7 +98,7 @@ export async function DELETE(req: Request, ctx: { params: Promise<{ id: string }
     if (typeof url !== "string") continue;
     if (!allowedPrefixes.some((p) => url.startsWith(p))) continue;
 
-    const filePath = toPublicPath(url);
+	const filePath = toUploadPath(url);
     if (!filePath) continue;
 
     await fs.unlink(filePath).catch((err: any) => {
