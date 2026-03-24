@@ -50,7 +50,7 @@ export default function NewProductPage() {
         priceFrom: priceFrom ? Number(priceFrom) : null,
         description,
         isActive,
-		imageUrls: imageUrls.map((url) => url.split("?")[0]),
+		imageUrls,
 		categoryId: type === "DOOR" ? (categoryId || null) : null,
       }),
     });
@@ -82,7 +82,6 @@ export default function NewProductPage() {
 			continue;
 			}
 		
-			const freshUrl = `${data.url}?v=${Date.now()}`;
 			setImageUrls((prev) => [...prev, data.url]); // добавляем в конец
 		}
 	}

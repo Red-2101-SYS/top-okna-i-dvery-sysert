@@ -7,19 +7,10 @@ import { adminCookieName, verifyAdminSession } from "@/lib/admin-auth";
 
 export const runtime = "nodejs";
 
-const MAX_FILE_SIZE = 5 * 1024 * 1024;
+const MAX_FILE_SIZE = 5 * 1024 * 1024; // 5 MB
 const ALLOWED_KINDS = new Set(["doors", "windows", "services"]);
 const ALLOWED_MIME_TYPES = new Set(["image/jpeg", "image/png", "image/webp"]);
 const ALLOWED_DELETE_PREFIXES = ["/products/doors/", "/products/windows/", "/services/uploads/"];
-
-function getUploadsRoot() {
-  const dir = process.env.UPLOADS_DIR;
-  if (!dir) {
-    throw new Error("UPLOADS_DIR is not set");
-  }
-
-  return path.isAbsolute(dir) ? dir : path.resolve(process.cwd(), dir);
-}
 
 function safeExt(name: string) {
   const ext = path.extname(name || "").toLowerCase();
@@ -52,21 +43,30 @@ function isPng(bytes: Uint8Array) {
 function isWebp(bytes: Uint8Array) {
   return (
     bytes.length >= 12 &&
-    bytes[0] === 0x52 &&
-    bytes[1] === 0x49 &&
-    bytes[2] === 0x46 &&
-    bytes[3] === 0x46 &&
-    bytes[8] === 0x57 &&
-    bytes[9] === 0x45 &&
-    bytes[10] === 0x42 &&
-    bytes[11] === 0x50
+    bytes[0] === 0x52 && // R
+    bytes[1] === 0x49 && // I
+    bytes[2] === 0x46 && // F
+    bytes[3] === 0x46 && // F
+    bytes[8] === 0x57 && // W
+    bytes[9] === 0x45 && // E
+    bytes[10] === 0x42 && // B
+    bytes[11] === 0x50 // P
   );
 }
 
 function matchesFileSignature(bytes: Uint8Array, ext: string, mime: string) {
-  if ((ext === ".jpg" || ext === ".jpeg") && mime === "image/jpeg") return isJpeg(bytes);
-  if (ext === ".png" && mime === "image/png") return isPng(bytes);
-  if (ext === ".webp" && mime === "image/webp") return isWebp(bytes);
+  if ((ext === ".jpg" || ext === ".jpeg") && mime === "image/jpeg") {
+    return isJpeg(bytes);
+  }
+
+  if (ext === ".png" && mime === "image/png") {
+    return isPng(bytes);
+  }
+
+  if (ext === ".webp" && mime === "image/webp") {
+    return isWebp(bytes);
+  }
+
   return false;
 }
 
@@ -135,12 +135,11 @@ export async function POST(req: Request) {
     }
 
     const filename = randName(ext);
-    const uploadsRoot = getUploadsRoot();
 
     const dir =
       kind === "services"
-        ? path.join(uploadsRoot, "services", "uploads")
-        : path.join(uploadsRoot, "products", kind);
+        ? path.join(process.cwd(), "public", "services", "uploads")
+        : path.join(process.cwd(), "public", "products", kind);
 
     await fs.mkdir(dir, { recursive: true });
     await fs.writeFile(path.join(dir, filename), Buffer.from(bytes));
@@ -175,11 +174,11 @@ export async function DELETE(req: Request) {
       return NextResponse.json({ ok: false, error: "Запрещённый путь" }, { status: 403 });
     }
 
-    const uploadsRoot = getUploadsRoot();
+    const publicDir = path.resolve(process.cwd(), "public");
     const rel = url.replace(/^\/+/, "");
-    const filePath = path.resolve(uploadsRoot, rel);
+    const filePath = path.resolve(publicDir, rel);
 
-    if (filePath !== uploadsRoot && !filePath.startsWith(uploadsRoot + path.sep)) {
+    if (filePath !== publicDir && !filePath.startsWith(publicDir + path.sep)) {
       return NextResponse.json({ ok: false, error: "Неверный путь" }, { status: 400 });
     }
 
