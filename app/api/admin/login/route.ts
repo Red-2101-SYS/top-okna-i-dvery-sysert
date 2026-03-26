@@ -9,24 +9,41 @@ export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
 
-    const adminEmail = process.env.ADMIN_EMAIL;
-    const adminPassword = process.env.ADMIN_PASSWORD;
-
-    if (!adminEmail || !adminPassword) {
+    if (!email || !password) {
       return NextResponse.json(
-        { error: "ADMIN_EMAIL или ADMIN_PASSWORD не заданы на сервере" },
-        { status: 500 }
+        { error: "Введите email и пароль" },
+        { status: 400 }
       );
     }
 
-    if (email !== adminEmail || password !== adminPassword) {
+    const user = await prisma.user.findUnique({
+      where: { email },
+    });
+
+    if (!user) {
       return NextResponse.json(
         { error: "Неверный email или пароль" },
         { status: 401 }
       );
     }
 
-	const token = await createAdminSession(email);
+    if (user.role !== "admin") {
+      return NextResponse.json(
+        { error: "Нет доступа" },
+        { status: 403 }
+      );
+    }
+
+    const ok = await bcrypt.compare(password, user.password);
+
+    if (!ok) {
+      return NextResponse.json(
+        { error: "Неверный email или пароль" },
+        { status: 401 }
+      );
+    }
+
+    const token = await createAdminSession(user.email);
 
     const res = NextResponse.json({ ok: true });
 
@@ -39,7 +56,11 @@ export async function POST(req: Request) {
     });
 
     return res;
-  } catch {
-    return NextResponse.json({ error: "Ошибка входа" }, { status: 500 });
+  } catch (error) {
+    console.error("Admin login error:", error);
+    return NextResponse.json(
+      { error: "Ошибка входа" },
+      { status: 500 }
+    );
   }
 }
