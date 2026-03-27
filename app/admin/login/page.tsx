@@ -60,6 +60,7 @@ export default function AdminLoginPage() {
               onChange={(e) => setEmail(e.target.value)}
               type="email"
               required
+			  maxLength={80}
               autoComplete="username"
               style={{ padding: 10, border: "1px solid #e5e7eb", borderRadius: 10 }}
             />
@@ -72,6 +73,7 @@ export default function AdminLoginPage() {
               onChange={(e) => setPassword(e.target.value)}
               type="password"
               required
+			  maxLength={80}
               autoComplete="current-password"
               style={{ padding: 10, border: "1px solid #e5e7eb", borderRadius: 10 }}
             />

@@ -9,12 +9,26 @@ export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
 
-    if (!email || !password) {
-      return NextResponse.json(
-        { error: "Введите email и пароль" },
-        { status: 400 }
-      );
-    }
+	if (typeof email !== "string" || typeof password !== "string") {
+	return NextResponse.json(
+		{ error: "Некорректные данные" },
+		{ status: 400 }
+	);
+	}
+
+	if (email.length > 100 || password.length > 100) {
+	return NextResponse.json(
+		{ error: "Слишком длинный логин или пароль" },
+		{ status: 400 }
+	);
+	}
+
+	if (!email || !password) {
+	return NextResponse.json(
+		{ error: "Введите email и пароль" },
+		{ status: 400 }
+	);
+	}
 
     const user = await prisma.user.findUnique({
       where: { email },
