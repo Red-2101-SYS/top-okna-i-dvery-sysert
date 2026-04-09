@@ -9,7 +9,6 @@ const links = [
   { href: "/calculator", label: "Калькулятор" },
   { href: "/services", label: "Услуги" },
   { href: "/contacts", label: "Контакты" },
-  { href: "/admin", label: "Панель Администратора" },
 ];
 
 export default function Header() {
