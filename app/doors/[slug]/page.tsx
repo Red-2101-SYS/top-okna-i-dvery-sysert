@@ -2,6 +2,7 @@ import CalcLeadFormClient from "@/app/components/CalcLeadFormClient";
 import ProductGallery from "@/app/components/ProductGallery";
 import Link from "next/link";
 import { ui } from "@/app/styles/ui";
+import { notFound } from "next/navigation";
 
 type Product = {
   id: string;
@@ -18,10 +19,12 @@ async function getProduct(slug: string): Promise<Product | null> {
 	const res = await fetch(`${process.env.APP_URL}/api/products/${slug}`, {
 	  cache: "no-store",
   });
+	if (res.status === 404) {
+		notFound();
+	}
 	if (!res.ok) {
 		throw new Error(`Failed to load product: ${res.status}`);
 	}
-  if (!res.ok) return null;
   const data = await res.json();
   return data.product ?? null;
 }
