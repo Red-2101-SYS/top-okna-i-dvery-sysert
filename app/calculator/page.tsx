@@ -979,7 +979,7 @@ function LeadSendBlock({
 		/>
 		<span>
 			Я даю согласие на обработку персональных данных и принимаю{" "}
-			<Link href="/privacy-policy" style={policyLink}>
+			<Link href="/privacy" style={policyLink}>
 			Политику конфиденциальности
 			</Link>
 			.
