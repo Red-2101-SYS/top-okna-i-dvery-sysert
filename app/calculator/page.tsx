@@ -1,6 +1,7 @@
 "use client";
 
 import { Suspense, useEffect, useMemo, useState } from "react";
+import Link from "next/link";
 import { useSearchParams } from "next/navigation";
 import { ui } from "@/app/styles/ui";
 
@@ -893,6 +894,7 @@ function LeadSendBlock({
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [comment, setComment] = useState("");
+  const [agree, setAgree] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [ok, setOk] = useState(false);
@@ -900,6 +902,10 @@ function LeadSendBlock({
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+	if (!agree) {
+		setError("Необходимо дать согласие на обработку персональных данных.");
+		return;
+	}
     setLoading(true);
     setOk(false);
     setError(null);
@@ -930,6 +936,7 @@ function LeadSendBlock({
     setName("");
     setPhone("");
     setComment("");
+	setAgree(false);
   }
 
   return (
@@ -963,7 +970,21 @@ function LeadSendBlock({
 
         {error && <div style={err}>{error}</div>}
         {ok && <div style={okBox}>Заявка отправлена! Мы скоро свяжемся.</div>}
-
+		<label style={agreeWrap}>
+		<input
+			type="checkbox"
+			checked={agree}
+			onChange={(e) => setAgree(e.target.checked)}
+			style={agreeCheckbox}
+		/>
+		<span>
+			Я даю согласие на обработку персональных данных и принимаю{" "}
+			<Link href="/privacy-policy" style={policyLink}>
+			Политику конфиденциальности
+			</Link>
+			.
+		</span>
+		</label>
         <button disabled={loading} type="submit" className="btn btn-primary" style={btnPrimary}>
           {loading ? "Отправляем..." : "Отправить"}
         </button>
@@ -1109,4 +1130,24 @@ const badgeInCard: React.CSSProperties = {
   fontWeight: 900,
   fontSize: 12,
   letterSpacing: 0.4,
+};
+
+
+const agreeWrap: React.CSSProperties = {
+  display: "flex",
+  alignItems: "flex-start",
+  gap: 10,
+  fontSize: 14,
+  lineHeight: 1.5,
+  color: "#374151",
+};
+
+const agreeCheckbox: React.CSSProperties = {
+  marginTop: 3,
+  flexShrink: 0,
+};
+
+const policyLink: React.CSSProperties = {
+  color: "#b91c1c",
+  textDecoration: "underline",
 };

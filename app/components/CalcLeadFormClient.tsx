@@ -1,5 +1,5 @@
 "use client";
-
+import Link from "next/link";
 import { useState } from "react";
 
 type Product = {
@@ -23,9 +23,14 @@ export default function CalcLeadFormClient({
   const [loading, setLoading] = useState(false);
   const [ok, setOk] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [agree, setAgree] = useState(false);
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+	if (!agree) {
+		setError("Необходимо дать согласие на обработку персональных данных.");
+		return;
+	}
     setLoading(true);
     setOk(false);
     setError(null);
@@ -67,6 +72,7 @@ export default function CalcLeadFormClient({
     setPhone("");
     setName("");
     setComment("");
+	setAgree(false);
   }
 
   return (
@@ -104,6 +110,22 @@ export default function CalcLeadFormClient({
       {error && <div style={err}>{error}</div>}
       {ok && <div style={okBox}>Заявка отправлена! Мы скоро свяжемся.</div>}
 
+	   <label style={agreeWrap}>
+		<input
+			type="checkbox"
+			checked={agree}
+			onChange={(e) => setAgree(e.target.checked)}
+			style={agreeCheckbox}
+		/>
+		<span>
+			Я даю согласие на обработку персональных данных и принимаю{" "}
+			<Link href="/privacy" style={policyLink}>
+			Политику конфиденциальности
+			</Link>
+			.
+		</span>
+	   </label>
+
       <button disabled={loading} type="submit" className="btn btn-primary" style={btnPrimary}>
         {loading ? "Отправляем..." : "Отправить заявку"}
       </button>
@@ -123,3 +145,22 @@ const btnPrimary: React.CSSProperties = {
 };
 const err: React.CSSProperties = { padding: 10, borderRadius: 10, background: "#fee2e2", border: "1px solid #fecaca" };
 const okBox: React.CSSProperties = { padding: 10, borderRadius: 10, background: "#dcfce7", border: "1px solid #bbf7d0" };
+
+const agreeWrap: React.CSSProperties = {
+  display: "flex",
+  alignItems: "flex-start",
+  gap: 10,
+  fontSize: 14,
+  lineHeight: 1.5,
+  color: "#374151",
+};
+
+const agreeCheckbox: React.CSSProperties = {
+  marginTop: 3,
+  flexShrink: 0,
+};
+
+const policyLink: React.CSSProperties = {
+  color: "#b91c1c",
+  textDecoration: "underline",
+};

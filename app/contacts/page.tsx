@@ -28,7 +28,7 @@ export default function ContactsPage() {
               <div style={{ fontWeight: 900, marginBottom: 8 }}>Менеджер</div>
               <div><b>ФИО:</b> Наталья Одношевина </div>
               <div style={{ marginTop: 6 }}><b>Телефон:</b> +7(912)66-44-447 </div>
-              <div style={{ marginTop: 6 }}><b>Email:</b> (Заглушка)</div>
+              <div style={{ marginTop: 6 }}><b>Email:</b> vvdred1909Lev@mail.ru</div>
             </div>
 
             <div style={ui.card}>

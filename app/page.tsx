@@ -247,6 +247,7 @@ function MeasureLeadForm() {
   const [name, setName] = useState("");
   const [phone, setPhone] = useState("");
   const [comment, setComment] = useState("");
+  const [agree, setAgree] = useState(false);
 
   const [loading, setLoading] = useState(false);
   const [ok, setOk] = useState(false);
@@ -254,6 +255,10 @@ function MeasureLeadForm() {
 
   async function submit(e: React.FormEvent) {
     e.preventDefault();
+	if (!agree) {
+		setError("Необходимо дать согласие на обработку персональных данных.");
+		return;
+	}
     setLoading(true);
     setOk(false);
     setError(null);
@@ -283,6 +288,7 @@ function MeasureLeadForm() {
     setName("");
     setPhone("");
     setComment("");
+	setAgree(false);
   }
 
   return (
@@ -305,79 +311,23 @@ function MeasureLeadForm() {
 
       {error && <div style={err}>{error}</div>}
       {ok && <div style={okBox}>Заявка отправлена! Мы скоро свяжемся.</div>}
-
+		<label style={agreeWrap}>
+		<input
+			type="checkbox"
+			checked={agree}
+			onChange={(e) => setAgree(e.target.checked)}
+			style={agreeCheckbox}
+		/>
+		<span>
+			Я даю согласие на обработку персональных данных и принимаю{" "}
+			<Link href="/privacy" style={policyLink}>
+			Политику конфиденциальности
+			</Link>
+			.
+		</span>
+		</label>
       <button disabled={loading} type="submit" className="btn btn-primary"  style={ui.btnPrimary}>
         {loading ? "Отправляем..." : "Вызвать замерщика"}
-      </button>
-    </form>
-  );
-}
-
-function CallbackLeadForm() {
-  const [name, setName] = useState("");
-  const [phone, setPhone] = useState("");
-  const [comment, setComment] = useState("");
-
-  const [loading, setLoading] = useState(false);
-  const [ok, setOk] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-
-  async function submit(e: React.FormEvent) {
-    e.preventDefault();
-    setLoading(true);
-    setOk(false);
-    setError(null);
-
-    const res = await fetch("/api/leads", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        type: "CALLBACK",
-        name,
-        phone,
-        comment,
-        pageUrl: window.location.href,
-        referrer: document.referrer,
-      }),
-    });
-
-    const data = await res.json().catch(() => ({}));
-    setLoading(false);
-
-    if (!res.ok) {
-      setError(data?.error || "Ошибка отправки");
-      return;
-    }
-
-    setOk(true);
-    setName("");
-    setPhone("");
-    setComment("");
-  }
-
-  return (
-    <form onSubmit={submit} style={{ display: "grid", gap: 12, marginTop: 12 }}>
-      <div style={grid2}>
-        <label style={lbl}>
-          <span>Имя</span>
-          <input value={name} onChange={(e) => setName(e.target.value)} style={input} />
-        </label>
-        <label style={lbl}>
-          <span>Телефон *</span>
-          <input value={phone} onChange={(e) => setPhone(e.target.value)} required style={input} placeholder="+7..." />
-        </label>
-      </div>
-
-      <label style={lbl}>
-        <span>Комментарий</span>
-        <textarea value={comment} onChange={(e) => setComment(e.target.value)} style={{ ...input, minHeight: 90 }} />
-      </label>
-
-      {error && <div style={err}>{error}</div>}
-      {ok && <div style={okBox}>Заявка отправлена! Мы скоро свяжемся.</div>}
-
-      <button disabled={loading} type="submit" style={ui.btnPrimary}>
-        {loading ? "Отправляем..." : "Заказать звонок"}
       </button>
     </form>
   );
@@ -524,4 +474,23 @@ const mobileCallBtn: React.CSSProperties = {
   textDecoration: "none",
   display: "block",
   textAlign: "center",
+};
+
+const agreeWrap: React.CSSProperties = {
+  display: "flex",
+  alignItems: "flex-start",
+  gap: 10,
+  fontSize: 14,
+  lineHeight: 1.5,
+  color: "#374151",
+};
+
+const agreeCheckbox: React.CSSProperties = {
+  marginTop: 3,
+  flexShrink: 0,
+};
+
+const policyLink: React.CSSProperties = {
+  color: "#b91c1c",
+  textDecoration: "underline",
 };

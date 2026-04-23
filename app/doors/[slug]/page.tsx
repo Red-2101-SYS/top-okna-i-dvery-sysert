@@ -78,7 +78,7 @@ export default async function DoorPage(ctx: { params: Promise<{ slug: string }> 
 				</div>
 
 				<section style={card}>
-				<h2 style={{ marginTop: 0 }}>Получить расчёт</h2>
+				<h2 style={{ marginTop: 0 }}>Получить консультацию</h2>
 				<p style={{ color: "#6b7280", marginTop: 6 }}>
 					Оставьте телефон — мы перезвоним и рассчитаем стоимость.
 				</p>
