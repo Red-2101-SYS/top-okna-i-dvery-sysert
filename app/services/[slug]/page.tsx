@@ -84,13 +84,17 @@ export default function ServiceDetailsPage() {
   return (
     <main style={{ padding: "24px 0" }}>
       <div style={ui.container}>
-        <div style={{ display: "flex", justifyContent: "space-between", gap: 12, flexWrap: "wrap" }}>
+        <div
+          className="service-top-actions"
+          style={{
+            display: "flex",
+            justifyContent: "space-between",
+            gap: 12,
+            flexWrap: "wrap",
+          }}
+        >
           <Link href="/services" className="btn btn-ghost" style={ui.btnGhost}>
             ← К услугам
-          </Link>
-
-		  <Link href={`/calculator?tab=services&service=${encodeURIComponent(s.slug)}`} className="btn btn-primary" style={ui.btnPrimary}>
-            Оставить заявку
           </Link>
         </div>
 
@@ -102,11 +106,21 @@ export default function ServiceDetailsPage() {
           </div>
         </div>
 
-        <div style={{ marginTop: 16, display: "grid", gridTemplateColumns: "1.2fr 0.8fr", gap: 16, alignItems: "start" }}>
+        <div
+          className="service-layout"
+          style={{
+            marginTop: 16,
+            display: "grid",
+            gridTemplateColumns: "1.2fr 0.8fr",
+            gap: 16,
+            alignItems: "start",
+          }}
+        >
           {/* Галерея */}
           <div style={ui.card}>
             {activeImg ? (
               <img
+				className="service-main-image"
                 src={activeImg}
                 alt={s.title}
                 style={{
@@ -121,6 +135,7 @@ export default function ServiceDetailsPage() {
               />
             ) : (
               <div
+                className="service-main-image service-empty-image"
                 style={{
                   width: "100%",
                   height: 420,
@@ -139,8 +154,7 @@ export default function ServiceDetailsPage() {
 
             {s.imageUrls.length > 1 && (
               <div style={{ marginTop: 12, display: "flex", gap: 10, flexWrap: "wrap" }}>
-                {s.imageUrls.
-				map((u, i) => (
+                {s.imageUrls.map((u, i) => (
                   <button
                     key={u}
                     type="button"
@@ -178,7 +192,9 @@ export default function ServiceDetailsPage() {
               {s.description?.trim() ? s.description : "Описание скоро появится."}
             </div>
 
-            <div style={{ marginTop: 14, display: "flex", gap: 10, flexWrap: "wrap" }}>
+            <div 
+			className="service-bottom-actions"
+			style={{ marginTop: 14, display: "flex", gap: 10, flexWrap: "wrap" }}>
 			  <Link href={`/calculator?tab=services&service=${s.slug}`} className="btn btn-primary" style={ui.btnPrimary}>
                 Оставить заявку
               </Link>
@@ -189,6 +205,30 @@ export default function ServiceDetailsPage() {
           </div>
         </div>
       </div>
+	  
+	  <style jsx>{`
+        @media (max-width: 768px) {
+          .service-layout {
+            grid-template-columns: 1fr !important;
+          }
+
+          .service-main-image {
+            height: 260px !important;
+          }
+
+          .service-top-actions,
+          .service-bottom-actions {
+            flex-direction: column;
+          }
+
+          .service-top-actions :global(a),
+          .service-bottom-actions :global(a) {
+            width: 100%;
+            justify-content: center;
+          }
+        }
+      `}</style>
+	  
     </main>
   );
 }
